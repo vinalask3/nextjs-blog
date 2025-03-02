@@ -1,6 +1,9 @@
 "use server"
 
 import { RegisterFormSchema } from "@/libs/rules"
+import { getCollection } from "@/libs/db"
+import bcrypt from "bcrypt"
+import { redirect } from "next/dist/server/api-utils"
 
 export async function Register(state, formData){
     const validatedFields = RegisterFormSchema.safeParse({
@@ -9,6 +12,7 @@ export async function Register(state, formData){
         confirmPassword: formData.get("confirmPassword"),
     })
 
+    // Return if validation fails
     if(! validatedFields.success){
         return {
             success: false,
@@ -17,4 +21,44 @@ export async function Register(state, formData){
             email: formData.get("email"),
         }
     }
+
+    // Destructure validated fields and get user collection
+    const { email, password } = validatedFields.data;
+    const userCollection = await getCollection("users");
+
+    if(userCollection === null){
+        return {
+            errors: {email: "Database connection error"},
+            success: false,
+            message: "Database connection error",
+        }
+    }
+    // Check if user already exists in collection
+    const existingUser = await userCollection.findOne({email});
+
+    if(existingUser !== null){
+        return {
+            errors: {email: "Email already exists"},
+            success: false,
+            message: "Email already exists",
+        }
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert user
+    const result = await userCollection.insertOne({    
+        email,
+        password: hashedPassword,
+    });
+
+    // create session
+    // const session = await createSession(result.insertedId);
+
+
+    // Redirect with success message
+    redirect("/dashboard");
+
+    console.log(result);
 }

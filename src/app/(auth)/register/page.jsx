@@ -30,9 +30,9 @@ function RegisterForm() {
             </div>}
         </div>
         <div>
-          <label htmlFor="confirmPassword">Email</label>
-          <input type="email" name="confirmPassword" id='confirmPassword' />
-          {state?.errors?.email && <p className='text-red-500'>{state.errors.email}</p>}
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input type="password" name="confirmPassword" id='confirmPassword' />
+          {state?.errors?.confirmPassword && <p className='text-red-500'>{state.errors.confirmPassword}</p>}
         </div>
 
         <div className="flex items-end gap-4">
