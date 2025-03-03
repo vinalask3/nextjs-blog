@@ -4,6 +4,7 @@ import { RegisterFormSchema } from "@/libs/rules"
 import { getCollection } from "@/libs/db"
 import bcrypt from "bcrypt"
 import { redirect } from "next/dist/server/api-utils"
+import { createSession } from "@/libs/session"
 
 export async function Register(state, formData){
     const validatedFields = RegisterFormSchema.safeParse({
@@ -54,6 +55,8 @@ export async function Register(state, formData){
     });
 
     // create session
+
+    await createSession(result.insertedId);
     // const session = await createSession(result.insertedId);
 
 
