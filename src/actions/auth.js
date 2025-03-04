@@ -54,9 +54,10 @@ export async function Register(state, formData){
         password: hashedPassword,
     });
 
-    // create session
+    // create session. 
+    // This could also be where you fire a verification email and redirect user to a 'success' page
 
-    await createSession(result.insertedId);
+    await createSession(result.insertedId.toString());
     // const session = await createSession(result.insertedId);
 
 

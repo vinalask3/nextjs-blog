@@ -1,3 +1,4 @@
+import "server-only";
 import { MongoClient, ServerApiVersion } from "mongodb"
 
 if( ! process.env.MONGO_URI ){
@@ -23,7 +24,7 @@ async function getDB(DBName) {
 }
 
 export async function getCollection(collectionName) {
-    const DB = await getDB("nextjsBlog");
+    const DB = await getDB(process.env.DB_NAME);
     if(DB){
         return DB.collection(collectionName);
     }

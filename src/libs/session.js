@@ -1,3 +1,5 @@
+import "server-only";
+import { jwtVerify } from "jose";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
 
@@ -9,7 +11,7 @@ export async function encrypt(payload) {
     return new SignJWT(payload
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
-        .setExpirationTime("24h")
+        .setExpirationTime("7d")
     ).sign(encodedKey);
 }
 
@@ -18,6 +20,7 @@ export async function decrypt(token) {
         const { payload } = await jwtVerify(token, encodedKey, {
             algorithms: ["HS256"],
         });
+        return payload;
     } catch(e){
         console.log("Failed to verify session...");
         return null;
