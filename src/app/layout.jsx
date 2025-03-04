@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "./globals.css";
-import Poppins from "next/font/google";
+import {Poppins} from "next/font/google";
+import NavLinks from "@/components/NavLinks";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -8,15 +9,17 @@ const poppins = Poppins({
 });
 
 export default function RootLayout({ children }) {
+
   return (
     <html lang="en" className={poppins.className}>
       <body>
         <header>
           <nav>
-            <Link href="/" className="nav-link">Home</Link>
-            <Link href="/dashboard" className="nav-link">Dashboard</Link>
-            <Link href="/login" className="nav-link">Login</Link>
-            <Link href="/register" className="nav-link">Register</Link>
+            <NavLinks href="/" label="Home" />
+            <div>
+              <NavLinks href="/dashboard" label="Dashboard" />
+              <NavLinks href="/register" label="Register" />
+            </div>
           </nav>
         </header>
         <main>
