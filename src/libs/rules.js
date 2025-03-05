@@ -14,3 +14,16 @@ export const RegisterFormSchema = z.object({
         })
     }
 })
+
+export const LoginFormSchema = z
+  .object({
+    email: z
+      .string()
+      .email({ message: "Please provide a valid email address" })
+      .trim(),
+    password: z
+      .string()
+      .min(1, { message: "Password must be provided" }).trim()
+      
+  });
+  

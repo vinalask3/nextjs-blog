@@ -1,6 +1,6 @@
 "use server"
 
-import { RegisterFormSchema } from "@/libs/rules"
+import { LoginFormSchema, RegisterFormSchema } from "@/libs/rules"
 import { getCollection } from "@/libs/db"
 import bcrypt from "bcrypt"
 import { redirect } from "next/dist/server/api-utils"
@@ -65,4 +65,39 @@ export async function Register(state, formData){
     redirect("/dashboard");
 
     console.log(result);
+}
+
+export async function Login(state, formData){
+    // validate form fields
+    const validatedFields = LoginFormSchema.safeParse({
+        email: formData.get('email'), 
+        password: formData.get('password')
+    });
+    // Did validation pass?
+    if(!validatedFields.success){
+        return {
+            errors: validatedFields.error.flatten().error,
+            email: formData.get('email')
+        }
+    }
+    // Does email exist in database (is user already registered?)
+    const userCollection = await getCollection('users');
+    if(!userCollection){
+        return {errors: {email: "Server error!"}}
+    }
+    existingUser = await userCollection.findOne({email});
+    if(!existingUser){
+        return {errors: {email: "Invalid credentials"}}
+    }
+
+    const matchedPassword = await bcrypt.compare(password, existingUser.password);
+
+    if(!matchedPassword){
+        return {errors: {email: "Invalid credentials"}}
+    }
+
+    // All good, create session
+    await createSession(existingUser._id.toString());
+
+    redirect('/dashboard');
 }
