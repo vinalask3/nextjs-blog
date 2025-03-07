@@ -5,14 +5,14 @@ import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
 
-const encodedKey =  new TextDecoder().encode(secretKey);
+const encodedKey =  new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload) {
-    return new SignJWT(payload
+    return new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime("7d")
-    ).sign(encodedKey);
+        .sign(encodedKey);
 }
 
 export async function decrypt(token) {

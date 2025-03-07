@@ -1,12 +1,13 @@
 "use server"
 
+import bcrypt from "bcryptjs"
 import { LoginFormSchema, RegisterFormSchema } from "@/libs/rules"
 import { getCollection } from "@/libs/db"
-import bcrypt from "bcrypt"
 import { redirect } from "next/dist/server/api-utils"
 import { createSession } from "@/libs/session"
 
 export async function Register(state, formData){
+    console.log('Entered function')
     const validatedFields = RegisterFormSchema.safeParse({
         email: formData.get("email"),
         password: formData.get("password"),
@@ -22,6 +23,7 @@ export async function Register(state, formData){
             email: formData.get("email"),
         }
     }
+    console.log('Validation passed.')
 
     // Destructure validated fields and get user collection
     const { email, password } = validatedFields.data;
@@ -57,14 +59,11 @@ export async function Register(state, formData){
     // create session. 
     // This could also be where you fire a verification email and redirect user to a 'success' page
 
-    await createSession(result.insertedId.toString());
-    // const session = await createSession(result.insertedId);
-
+    await createSession(result.insertedId);
 
     // Redirect with success message
     redirect("/dashboard");
 
-    console.log(result);
 }
 
 export async function Login(state, formData){
